@@ -1,0 +1,3 @@
+# Log files and compiled outputs
+*.log
+__pycache__/
