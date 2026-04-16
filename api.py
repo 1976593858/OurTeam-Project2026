@@ -2,13 +2,14 @@ from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from typing import List
+from pydantic import validator
 import uuid
 
 from game import Game
 
 app = FastAPI(
     title="文字冒险游戏 API",
-    description="OurTeam-Project2026 游戏接口契约，前后端联调依据",
+    description="OurTeam-Project2026 ",
     version="1.0.0"
 )
 
@@ -19,11 +20,8 @@ app.add_middleware(
     allow_headers=["*"]
 )
 
-# 内存会话存储
 sessions: dict[str, Game] = {}
 
-
-# ---------- 数据模型 ----------
 
 class NewGameResponse(BaseModel):
     session_id: str
@@ -45,6 +43,16 @@ class ActionResponse(BaseModel):
     inventory: List[str]
     message: str
 
+
+class ActionRequest(BaseModel):
+    session_id: str
+    command: str
+    
+    @validator('command')
+    def validate_command(cls, v):
+        if not v or not v.strip():
+            raise ValueError('命令不能为空')
+        return v.strip()
 
 # ---------- 工具函数 ----------
 
