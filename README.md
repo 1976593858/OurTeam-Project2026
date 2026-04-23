@@ -15,22 +15,21 @@ DT：周文杰
 ```
 OurTeam-Project2026
 ├─ README.md
-├─ api.py
-├─ docs
-│  └─ openapi.yaml
-├─ game.py
-├─ item.py
-├─ main.py
-├─ player.py
-├─ requirements.txt
-├─ room.py
-└─ tests
-   ├─ __init__.py
+├─ api.py              # FastAPI 应用入口
+├─ docs/
+│  └─ openapi.yaml     # API 文档
+├─ game.py             # 游戏引擎核心逻辑
+├─ item.py             # 物品类
+├─ main.py             # 命令行游戏入口
+├─ player.py           # 玩家类
+├─ requirements.txt    # Python 依赖
+├─ room.py             # 房间类
+└─ tests/              # 单元测试
+   ├─ test_api.py      # API 测试
    ├─ test_game_mock.py
    ├─ test_item.py
    ├─ test_player.py
    └─ test_room.py
-
 ```
 
 ## 核心模块职责
