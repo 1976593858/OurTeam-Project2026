@@ -11,6 +11,18 @@ SM：张智霖
 
 DT：周文杰
 
+## 系统架构
+```mermaid
+graph TD
+    A[客户端] -->|HTTP| B(FastAPI 应用)
+    B --> C[GameEngine]
+    C --> D[Player]
+    C --> E[Room]
+    C --> F[Item]
+    C --> G[WorldBuilder]
+    H[(配置文件)] --> G
+```
+
 ## 项目结构
 ```
 OurTeam-Project2026
