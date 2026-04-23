@@ -9,7 +9,7 @@ from game import Game
 
 app = FastAPI(
     title="文字冒险游戏 API",
-    description="OurTeam-Project2026 ",
+    description="OurTeam-Project2026",
     version="1.0.0"
 )
 
@@ -31,9 +31,17 @@ class NewGameResponse(BaseModel):
     inventory: List[str]
     message: str
 
+
 class ActionRequest(BaseModel):
     session_id: str
     command: str
+
+    @validator('command')
+    def validate_command(cls, v):
+        if not v or not v.strip():
+            raise ValueError('命令不能为空')
+        return v.strip()
+
 
 class ActionResponse(BaseModel):
     session_id: str
@@ -43,18 +51,6 @@ class ActionResponse(BaseModel):
     inventory: List[str]
     message: str
 
-
-class ActionRequest(BaseModel):
-    session_id: str
-    command: str
-    
-    @validator('command')
-    def validate_command(cls, v):
-        if not v or not v.strip():
-            raise ValueError('命令不能为空')
-        return v.strip()
-
-# ---------- 工具函数 ----------
 
 def build_state(session_id: str, game: Game, message: str = "") -> dict:
     room = game.player.current_room
@@ -68,11 +64,8 @@ def build_state(session_id: str, game: Game, message: str = "") -> dict:
     }
 
 
-# ---------- 接口 ----------
-
 @app.post("/api/v1/game/new", response_model=NewGameResponse, tags=["Game"])
 def new_game():
-    """创建一个新的游戏会话，返回初始房间状态"""
     session_id = str(uuid.uuid4())[:8]
     game = Game()
     sessions[session_id] = game
@@ -81,36 +74,16 @@ def new_game():
 
 @app.post("/api/v1/game/action", response_model=ActionResponse, tags=["Game"])
 def do_action(req: ActionRequest):
-    """
-    向游戏发送一条指令。
-
-    支持的指令示例：
-    - `look` 查看房间
-    - `north` / `south` / `east` / `west` 移动
-    - `take 物品名` 拾取物品
-    - `inventory` 查看背包
-    - `quit` 结束游戏
-    """
     game = sessions.get(req.session_id)
     if not game:
         raise HTTPException(status_code=404, detail="会话不存在或已过期，请重新创建游戏")
 
-    # 捕获 _process_command 的 print 输出作为 message
-    import io, sys
-    buffer = io.StringIO()
-    sys.stdout = buffer
-    try:
-        game._process_command(req.command)
-    finally:
-        sys.stdout = sys.__stdout__
-    message = buffer.getvalue().strip()
-
+    message = game._process_command(req.command)
     return build_state(req.session_id, game, message=message)
 
 
 @app.get("/api/v1/game/{session_id}/state", response_model=ActionResponse, tags=["Game"])
 def get_state(session_id: str):
-    """查询当前游戏会话的状态（不执行任何指令）"""
     game = sessions.get(session_id)
     if not game:
         raise HTTPException(status_code=404, detail="会话不存在")
@@ -119,7 +92,6 @@ def get_state(session_id: str):
 
 @app.delete("/api/v1/game/{session_id}", tags=["Game"])
 def end_game(session_id: str):
-    """销毁指定游戏会话"""
     if session_id not in sessions:
         raise HTTPException(status_code=404, detail="会话不存在")
     del sessions[session_id]
