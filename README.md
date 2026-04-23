@@ -40,3 +40,9 @@ OurTeam-Project2026
 | player.py | 玩家状态与行为 |
 | room.py | 房间与出口 |
 | item.py | 物品定义 |
+
+## 技术栈
+- Python 3.11+
+- FastAPI
+- Pytest
+- GitHub Actions (CI)
