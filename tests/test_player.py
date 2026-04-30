@@ -1,5 +1,6 @@
 import sys
 import os
+
 sys.path.insert(0, os.path.dirname(os.path.dirname(__file__)))
 
 from room import Room
@@ -48,3 +49,50 @@ class TestPlayer:
         """拾取不存在的物品应该返回 None"""
         result = self.player.take_item("不存在的物品")
         assert result is None
+
+    # 在现有测试基础上添加：
+    def test_player_gold_operations(self):
+        """测试金币操作"""
+        # 设置初始金币
+        self.player.gold = 50
+        assert self.player.gold == 50
+
+        # 测试增加金币
+        self.player.earn_gold(30)
+        assert self.player.gold == 80
+
+        # 测试减少金币
+        self.player.spend_gold(30)
+        assert self.player.gold == 50
+
+    def test_player_spend_gold(self):
+        """测试花费金币"""
+        # 设置初始金币
+        self.player.gold = 50
+        
+        # 测试足够金币
+        result = self.player.spend_gold(30)
+        assert result is True
+        assert self.player.gold == 20
+
+        # 测试金币不足
+        self.player.gold = 10
+        result = self.player.spend_gold(30)
+        assert result is False
+        assert self.player.gold == 10
+
+    def test_player_inventory_limit(self):
+        """测试背包限制"""
+        # 设置较小的背包容量以便测试
+        self.player.max_inventory_size = 2
+        
+        # 添加物品直到背包满
+        item1 = Item("物品1", "第一个物品")
+        item2 = Item("物品2", "第二个物品")
+        
+        assert self.player.add_item(item1) is True
+        assert self.player.add_item(item2) is True
+
+        # 尝试添加更多物品应该失败
+        item3 = Item("物品3", "第三个物品")
+        assert self.player.add_item(item3) is False
