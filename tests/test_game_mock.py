@@ -4,7 +4,8 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(__file__)))
 
 from unittest.mock import patch
 from game import Game
-from item import Item
+from item import Item, TradeableItem
+from npc import NPC
 
 
 class TestGameMock:
@@ -28,7 +29,7 @@ class TestGameMock:
         self.game._process_command("north")  # 先到客厅
         self.game._process_command("north")  # 客厅没有 north 出口
         captured = capsys.readouterr()
-        assert "走不通" in captured.out
+        assert "走不通" in captured.out or "走不通！" in captured.out
 
     def test_take_item_in_room(self, capsys):
         """拾取房间内存在的物品应该成功"""
