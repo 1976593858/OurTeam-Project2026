@@ -14,8 +14,7 @@ RUN apt-get update && apt-get install -y \
 # 复制依赖文件
 COPY requirements.txt .
 
-# 关键修复：使用官方 PyPI 源，并增加超时时间
-# 不使用国内镜像，避免云端网络拦截
+# 使用官方 PyPI 源，增加超时时间
 RUN pip install --upgrade pip && \
     pip install --no-cache-dir --timeout 100 -r requirements.txt
 
