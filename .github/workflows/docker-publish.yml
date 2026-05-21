@@ -34,4 +34,4 @@ jobs:
         with:
           context: .
           push: true
-          tags: ${{ secrets.DOCKER_USERNAME }}/mud-backend:latest
+          tags: zhangzl129/mud-backend:latest
